@@ -9,20 +9,28 @@
 using namespace std;
 using namespace cv;
 class myFaceRecognizer {
+	public:
+		myFaceRecognizer(const Mat& trFaces, const vector<int>& trImageIDToSubjectIDMap, int components);
+		~myFaceRecognizer();
 
-public:
-	myFaceRecognizer(const Mat& trFaces, const vector<int>& trImageIDToSubjectIDMap, int components);
-	~myFaceRecognizer();
-	void init(const Mat& trFaces, const vector<int>& trImageIDToSubjectIDMap, int components);
-	int recognize(const Mat& instance);
-	Mat getAverage();
-	Mat getEigenvectors();
-	Mat getEigenvalues();
+        /* Inner function, used for constructor. */
+		void init(const Mat& trFaces, const vector<int>& trImageIDToSubjectIDMap, int components);
 
-private:
-	PCA *pca;
-	vector<Mat> projTrFaces;
-	vector<int> trImageIDToSubjectIDMap;
+        /* Predict function */
+		int recognize(const Mat& instance);
+
+        /* Get functions : PCA wrappers */
+		Mat getAverage();
+		Mat getEigenvectors();
+		Mat getEigenvalues();
+
+	private:
+        /* major source of algorithm comes from OpenCV lib */
+		PCA *pca;
+        /* DB of faces from training data */
+		vector<Mat> projTrFaces;
+        /* Index of each traning faces */
+		vector<int> trImageIDToSubjectIDMap;
 };
 
 #endif

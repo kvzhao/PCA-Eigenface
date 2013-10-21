@@ -19,9 +19,12 @@ void myFaceRecognizer::init(const Mat& trFaces, const vector<int>& trImageIDToSu
 
 myFaceRecognizer::~myFaceRecognizer()
 {
-	delete pca;
+    delete pca;
 }
 
+/* The Major part of the implementation
+ *
+ * */
 int myFaceRecognizer::recognize(const Mat& unknown)
 {
 	// Take the vector representation of unknown's face image and project it
@@ -31,6 +34,7 @@ int myFaceRecognizer::recognize(const Mat& unknown)
 	// I now want to know which individual in my training data set has the shortest distance
 	// to unknown.
 	double closestFaceDist = DBL_MAX;
+    // DBL_MAX is the MACRO from <float.h>, about 1e37
 
 	int closestFaceID = -1;
 	for(unsigned int i = 0; i < projTrFaces.size(); i++) {
