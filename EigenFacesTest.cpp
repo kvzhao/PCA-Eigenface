@@ -79,10 +79,7 @@ void usage()
 
 void unableToLoad()
 {
-	cerr << "Unable to load face images. The program expects a set of face images in a subdirectory" << endl;
-	cerr << "of the execution directory named 'att_faces'. This face database can be freely downloaded " << endl;
-	cerr << "from the Cambridge University Copmputer Lab's website:" << endl;
-	cerr << "     http://www.cl.cam.ac.uk/research/dtg/attarchive/facedatabase.html" << endl;
+	cerr << "Unable to load face images. The program expects a set of face images in a subdirectory." << endl;
 	exit(1);
 }
 
@@ -147,13 +144,12 @@ int main (int argc, char *argv[]) {
 	// Eigenfaces operates on a vector representation of the image so we calculate the
 	// size of this vector.  Now we read the face images and reshape them into vectors
 	// for the face recognizer to operate on.
-	//int imgVectorSize = teImg.cols * teImg.rows;
 	int imgVectorSize = trImg.cols * trImg.rows;
 
 	// Create a matrix that has 'imgVectorSize' rows and as many columns as there are images.
 	Mat trImgVectors(imgVectorSize, trFaceFiles.size(), CV_32FC1);
 
-	// Load the vector.
+	// Load the vector. -> Not fully understood
 	for(unsigned int i = 0; i < trFaceFiles.size(); i++)
 	{
 		Mat tmpTrImgVector = trImgVectors.col(i);
@@ -226,9 +222,17 @@ int main (int argc, char *argv[]) {
 	{
 		Mat oAvgImage = toGrayscale(fr.getAverage()).reshape(1, teImg.rows);
 		Mat sAvgImage;
-		resize(oAvgImage, sAvgImage, Size(teImg.cols*2, teImg.rows*2), 0, 0, INTER_LINEAR);
+        // why should we resize as twice size of the origin?
+		resize(oAvgImage, sAvgImage, Size(teImg.cols*1, teImg.rows*1), 0, 0, INTER_LINEAR);
 
 		imshow("The average face", sAvgImage);
+
+        // Show the test image and subtract it from the average face
+        // <Note> the average face is not be enlarged
+        Mat test_face = imread(teFaceFiles[0], 0);
+        imshow("Test face",test_face );
+        Mat face_variance = test_face - sAvgImage;
+        imshow("Phi of face", face_variance);
 
 		int eigenCount=6;
 		if(fr.getEigenvectors().rows < eigenCount){
