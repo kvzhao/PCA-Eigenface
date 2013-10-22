@@ -34,13 +34,3 @@
 8;training.db/s8/4045.tif
 8;training.db/s8/4046.tif
 8;training.db/s8/4047.tif
-
-
-
-
-
-
-
-
-
-
