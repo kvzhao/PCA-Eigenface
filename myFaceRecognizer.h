@@ -17,7 +17,7 @@ class myFaceRecognizer {
 		void init(const Mat& trFaces, const vector<int>& trImageIDToSubjectIDMap, int components);
 
         /* Predict function */
-		int recognize(const Mat& instance);
+		int recognize(const Mat& instance, int sim_measure = NORM_L2);
 
         /* Get functions : PCA wrappers */
 		Mat getAverage();

@@ -25,7 +25,7 @@ myFaceRecognizer::~myFaceRecognizer()
 /* The Major part of the implementation
  *
  * */
-int myFaceRecognizer::recognize(const Mat& unknown)
+int myFaceRecognizer::recognize(const Mat& unknown, int sim_measure)
 {
 	// Take the vector representation of unknown's face image and project it
 	// into face space.
@@ -43,7 +43,9 @@ int myFaceRecognizer::recognize(const Mat& unknown)
 		// between the projections of the current training face and unknown.
 		Mat src1 = projTrFaces[i];
 		Mat src2 = unkProjected;
-		double dist = norm(src1, src2, NORM_L2);
+
+        // normType-> NORM_INF/NORM_L1/NORM_L2
+		double dist = norm(src1, src2, sim_measure);
 
 		// Every time I find somebody with a shorter distance I save the distance, map his
 		// index number to his actual ID in the set of traing images and save the actual ID.
