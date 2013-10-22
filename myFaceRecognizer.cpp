@@ -22,6 +22,12 @@ myFaceRecognizer::~myFaceRecognizer()
     delete pca;
 }
 
+Mat myFaceRecognizer::reconstructFaces(int ImageID)
+{
+    return pca->backProject(projTrFaces.at(ImageID));
+}
+
+
 /* The Major part of the implementation
  *
  * */

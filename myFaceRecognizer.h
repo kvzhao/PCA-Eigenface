@@ -24,6 +24,9 @@ class myFaceRecognizer {
 		Mat getEigenvectors();
 		Mat getEigenvalues();
 
+        // Develop face reconstruction now
+        Mat reconstructFaces(int ImageID);
+
 	private:
         /* major source of algorithm comes from OpenCV lib */
 		PCA *pca;
