@@ -58,7 +58,8 @@ void readFile(const string& fileName, vector<string>& files, vector<int>& indexN
 		path.erase(std::remove(path.begin(), path.end(), '\n'), path.end());
 		path.erase(std::remove(path.begin(), path.end(), ' '), path.end());
 
-        cout << "Load file from  " << path << endl;
+        cout << "Load image from " << path << " labeled as "
+            << atoi( trueSubjectID.c_str()) << endl;
 		files.push_back(path);
 		indexNumToSubjectIDMap.push_back(atoi(trueSubjectID.c_str()));
 	}
@@ -149,7 +150,7 @@ int main (int argc, char *argv[]) {
 	// Create a matrix that has 'imgVectorSize' rows and as many columns as there are images.
 	Mat trImgVectors(imgVectorSize, trFaceFiles.size(), CV_32FC1);
 
-	// Load the vector. -> Not fully understood
+	// Load the vector.
 	for(unsigned int i = 0; i < trFaceFiles.size(); i++)
 	{
 		Mat tmpTrImgVector = trImgVectors.col(i);
@@ -217,24 +218,29 @@ int main (int argc, char *argv[]) {
 
 	msgSummary(correct, incorrect, teFaceFiles.size());
 
-	// Just for fun let's show the average face and some of the test faces on screen.
+	// Let's show the average face and some of the test faces on screen.
 	if(doShow)
 	{
 		Mat oAvgImage = toGrayscale(fr.getAverage()).reshape(1, teImg.rows);
 		Mat sAvgImage;
         // why should we resize as twice size of the origin?
-		resize(oAvgImage, sAvgImage, Size(teImg.cols*1, teImg.rows*1), 0, 0, INTER_LINEAR);
+		resize(oAvgImage, sAvgImage, Size(teImg.cols*2,teImg.rows*2), 0, 0, INTER_LINEAR);
 
 		imshow("The average face", sAvgImage);
 
         // Show the test image and subtract it from the average face
         // <Note> the average face is not be enlarged
         Mat test_face = imread(teFaceFiles[0], 0);
-        imshow("Test face",test_face );
-        Mat face_variance = test_face - sAvgImage;
-        imshow("Phi of face", face_variance);
+        Mat sTest_face;
+		resize(test_face, sTest_face, Size(teImg.cols*2, teImg.rows*2), 0, 0, INTER_LINEAR);
 
-		int eigenCount=6;
+        imshow("Test face",sTest_face);
+        Mat sFace_variance = sTest_face - sAvgImage;
+        imshow("Phi of face", sFace_variance);
+
+		// int eigenCount = trFaceFiles.size(); // Show all faces
+		int eigenCount = 1;// Show all faces
+
 		if(fr.getEigenvectors().rows < eigenCount){
 			eigenCount = fr.getEigenvectors().rows;
 		}
@@ -244,16 +250,24 @@ int main (int argc, char *argv[]) {
              << " ------------------------\n ";
 		for(int i = 0; i < eigenCount; i++) {
 			stringstream windowTitle;
-			windowTitle << "Eigenface No. " << i;
+			windowTitle << "Eigenface No." << i << " Eigval: "<< oEigenvalues.row(i)  ;
 
             cout << "\tNo. "<< i << "\t" << oEigenvalues.row(i) << endl;
 
 			Mat oEigenImage = toGrayscale(fr.getEigenvectors().row(i)).reshape(1, teImg.rows);
 			Mat sEigenImage;
 			resize(oEigenImage, sEigenImage, Size(teImg.cols*2, teImg.rows*2), 0, 0, INTER_LINEAR);
-
 			imshow(windowTitle.str(), sEigenImage);
 		}
+
+//        cout << "getEigenvectors :" << fr.getEigenvectors() << endl;
+        //Mat ReconstructedFace = fr.reconstructFaces(0);
+       // imshow("Reconstructed Faces",ReconstructedFace);
+
+			Mat RectFace = toGrayscale(fr.reconstructFaces(0)).reshape(1, teImg.rows);
+			Mat sRectFace;
+			resize(RectFace, sRectFace, Size(teImg.cols*2, teImg.rows*2), 0, 0, INTER_LINEAR);
+			imshow("Reconstructed Face",sRectFace);
 
 		waitKey(0);
 	}
